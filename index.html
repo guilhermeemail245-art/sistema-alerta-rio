@@ -6,6 +6,19 @@
   <title>Monitoramento do Rio - Tiradentes do Sul/RS</title>
 
   <style>
+    :root {
+      --bg: #020617;
+      --bg2: #0f172a;
+      --card: rgba(15, 23, 42, 0.88);
+      --border: rgba(148, 163, 184, 0.18);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --green: #22c55e;
+      --yellow: #facc15;
+      --red: #ef4444;
+      --blue: #38bdf8;
+    }
+
     * {
       box-sizing: border-box;
       font-family: Arial, Helvetica, sans-serif;
@@ -13,191 +26,309 @@
 
     body {
       margin: 0;
-      background: #0f172a;
-      color: #ffffff;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 32%),
+        radial-gradient(circle at top right, rgba(34, 197, 94, 0.12), transparent 34%),
+        linear-gradient(180deg, #020617 0%, #0f172a 100%);
+      color: var(--text);
     }
 
-    header {
-      background: linear-gradient(135deg, #020617, #0f172a);
-      border-bottom: 1px solid #1e293b;
-      padding: 28px 18px;
-      text-align: center;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 30px;
-      letter-spacing: -0.5px;
-    }
-
-    header p {
-      margin: 8px 0 0;
-      color: #94a3b8;
-      font-size: 15px;
-    }
-
-    main {
+    .page {
       max-width: 1180px;
       margin: 0 auto;
-      padding: 24px;
-    }
-
-    .hero {
-      border-radius: 22px;
-      padding: 28px;
-      background: #1e293b;
-      border: 1px solid #334155;
-      margin-bottom: 22px;
-      display: grid;
-      grid-template-columns: 1.3fr 1fr;
-      gap: 22px;
-      align-items: center;
-    }
-
-    .hero.normal {
-      border-left: 10px solid #22c55e;
-    }
-
-    .hero.alerta {
-      border-left: 10px solid #facc15;
-    }
-
-    .hero.inundacao {
-      border-left: 10px solid #ef4444;
-      background: #450a0a;
-      animation: pulse 1.4s infinite;
-    }
-
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 rgba(239, 68, 68, 0.2); }
-      50% { box-shadow: 0 0 24px rgba(239, 68, 68, 0.35); }
-      100% { box-shadow: 0 0 0 rgba(239, 68, 68, 0.2); }
-    }
-
-    .label {
-      color: #94a3b8;
-      text-transform: uppercase;
-      font-size: 13px;
-      letter-spacing: 0.08em;
-      font-weight: bold;
-    }
-
-    .nivel {
-      font-size: 52px;
-      font-weight: 900;
-      margin: 6px 0;
-      line-height: 1;
-    }
-
-    .cota {
-      font-size: 38px;
-      font-weight: 800;
-      margin-top: 12px;
-    }
-
-    .mensagem {
-      margin-top: 16px;
-      font-size: 18px;
-      line-height: 1.45;
-      color: #e2e8f0;
-    }
-
-    .status-side {
-      background: rgba(15, 23, 42, 0.65);
-      border: 1px solid #334155;
-      border-radius: 18px;
       padding: 18px;
     }
 
-    .status-side p {
-      margin: 6px 0;
-      color: #cbd5e1;
+    header {
+      padding: 22px 0 18px;
+      animation: fadeDown 0.6s ease;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-dot {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #38bdf8, #22c55e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      color: #020617;
+      box-shadow: 0 12px 30px rgba(56, 189, 248, 0.24);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 26px;
+      line-height: 1.05;
+      letter-spacing: -0.7px;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .admin-link {
+      color: white;
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    .admin-link:hover {
+      transform: translateY(-2px);
+      background: rgba(51, 65, 85, 0.96);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 26px;
+      display: grid;
+      grid-template-columns: 1.35fr 0.9fr;
+      gap: 22px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+      animation: fadeUp 0.7s ease;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: auto -80px -120px auto;
+      width: 260px;
+      height: 260px;
+      background: rgba(56, 189, 248, 0.08);
+      border-radius: 999px;
+    }
+
+    .hero.normal {
+      border-left: 9px solid var(--green);
+    }
+
+    .hero.alerta {
+      border-left: 9px solid var(--yellow);
+    }
+
+    .hero.inundacao {
+      border-left: 9px solid var(--red);
+      background: rgba(69, 10, 10, 0.88);
+      animation: fadeUp 0.7s ease, dangerPulse 1.4s infinite;
+    }
+
+    @keyframes dangerPulse {
+      0% { box-shadow: 0 0 0 rgba(239, 68, 68, 0.12); }
+      50% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.32); }
+      100% { box-shadow: 0 0 0 rgba(239, 68, 68, 0.12); }
+    }
+
+    .label {
+      color: var(--muted);
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .status-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .pulse-dot {
+      width: 13px;
+      height: 13px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 0 rgba(34, 197, 94, 0.5);
+      animation: dotPulse 1.5s infinite;
+    }
+
+    .pulse-dot.alerta {
+      background: var(--yellow);
+      box-shadow: 0 0 0 rgba(250, 204, 21, 0.5);
+    }
+
+    .pulse-dot.inundacao {
+      background: var(--red);
+      box-shadow: 0 0 0 rgba(239, 68, 68, 0.5);
+    }
+
+    @keyframes dotPulse {
+      0% { box-shadow: 0 0 0 0 currentColor; }
+      70% { box-shadow: 0 0 0 10px transparent; }
+      100% { box-shadow: 0 0 0 0 transparent; }
+    }
+
+    .nivel {
+      font-size: clamp(38px, 6vw, 64px);
+      font-weight: 950;
+      letter-spacing: -1.5px;
+      line-height: 0.95;
+      margin: 0;
+    }
+
+    .cota {
+      font-size: clamp(30px, 4vw, 44px);
+      font-weight: 900;
+      margin-top: 14px;
+    }
+
+    .mensagem {
+      margin-top: 14px;
+      font-size: 17px;
+      line-height: 1.5;
+      color: #e2e8f0;
+      max-width: 650px;
+    }
+
+    .side-panel {
+      position: relative;
+      z-index: 1;
+      background: rgba(2, 6, 23, 0.48);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .side-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      padding-bottom: 10px;
+    }
+
+    .side-item:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .side-item span:first-child {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .side-item span:last-child {
+      font-weight: bold;
+      text-align: right;
+      font-size: 14px;
     }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 18px;
-      margin-bottom: 22px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 18px;
     }
 
     .card {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 18px;
-      padding: 20px;
-      min-height: 126px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+      min-height: 124px;
+      animation: fadeUp 0.8s ease;
+      transition: 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(56, 189, 248, 0.32);
     }
 
     .card h2 {
-      margin: 0 0 12px;
-      font-size: 14px;
-      color: #94a3b8;
+      margin: 0 0 10px;
+      font-size: 12px;
+      color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
     }
 
     .valor {
-      font-size: 34px;
-      font-weight: 900;
+      font-size: 30px;
+      font-weight: 950;
+      letter-spacing: -0.8px;
+      line-height: 1.05;
     }
 
     .sub {
       margin-top: 8px;
-      color: #94a3b8;
-      font-size: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
     }
 
     .section {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 18px;
+      margin-top: 18px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
       padding: 20px;
-      margin-bottom: 22px;
+      animation: fadeUp 0.9s ease;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
     }
 
     .section h2 {
-      margin: 0 0 14px;
+      margin: 0;
       font-size: 20px;
+      letter-spacing: -0.3px;
     }
 
-    .forecast {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 12px;
-    }
-
-    .day {
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 14px;
-      padding: 14px;
-    }
-
-    .day strong {
-      display: block;
-      margin-bottom: 8px;
-    }
-
-    .day span {
-      display: block;
-      color: #cbd5e1;
-      font-size: 14px;
-      margin: 3px 0;
-    }
-
-    .analysis {
-      font-size: 17px;
-      line-height: 1.55;
-      color: #e2e8f0;
+    .mini-badge {
+      color: #bae6fd;
+      background: rgba(14, 165, 233, 0.14);
+      border: 1px solid rgba(56, 189, 248, 0.22);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+      white-space: nowrap;
     }
 
     .tag {
       display: inline-block;
-      padding: 6px 10px;
+      padding: 7px 12px;
       border-radius: 999px;
-      font-size: 13px;
-      font-weight: bold;
+      font-size: 12px;
+      font-weight: 900;
       margin-bottom: 10px;
     }
 
@@ -206,132 +337,435 @@
     .tag.alto { background: #7f1d1d; color: #fecaca; }
     .tag.critico { background: #991b1b; color: #ffffff; }
 
+    .analysis {
+      font-size: 16px;
+      line-height: 1.55;
+      color: #e2e8f0;
+    }
+
+    .forecast {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+
+    .day {
+      background: rgba(2, 6, 23, 0.55);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      border-radius: 16px;
+      padding: 13px;
+    }
+
+    .day strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .day span {
+      display: block;
+      color: #cbd5e1;
+      font-size: 13px;
+      margin: 4px 0;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 16px;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      overflow: hidden;
+      min-width: 520px;
     }
 
     th, td {
       padding: 12px;
-      border-bottom: 1px solid #334155;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
       text-align: left;
       font-size: 14px;
     }
 
     th {
-      color: #94a3b8;
+      color: var(--muted);
       text-transform: uppercase;
-      font-size: 12px;
-      letter-spacing: 0.06em;
+      font-size: 11px;
+      letter-spacing: 0.08em;
     }
 
     footer {
       text-align: center;
-      padding: 24px;
       color: #64748b;
+      padding: 26px 10px 10px;
       font-size: 13px;
+      line-height: 1.5;
     }
 
-    @media (max-width: 760px) {
+    .loading-shine {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .loading-shine::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transform: translateX(-100%);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+      animation: shine 1.6s infinite;
+    }
+
+    @keyframes shine {
+      100% { transform: translateX(100%); }
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeDown {
+      from {
+        opacity: 0;
+        transform: translateY(-12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 980px) {
       .hero {
         grid-template-columns: 1fr;
       }
 
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .forecast {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    @media (max-width: 620px) {
+      .page {
+        padding: 12px;
+      }
+
+      header {
+        padding: 14px 0;
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
+
+      .logo-dot {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        font-size: 14px;
+      }
+
+      .brand h1 {
+        font-size: 20px;
+      }
+
+      .brand p {
+        font-size: 12px;
+      }
+
+      .admin-link {
+        width: 100%;
+        text-align: center;
+        padding: 11px;
+        font-size: 13px;
+      }
+
+      .hero {
+        border-radius: 22px;
+        padding: 18px;
+        gap: 16px;
+        border-left-width: 7px;
+      }
+
+      .label {
+        font-size: 11px;
+      }
+
       .nivel {
-        font-size: 42px;
+        font-size: 34px;
+        letter-spacing: -0.8px;
       }
 
       .cota {
-        font-size: 32px;
+        font-size: 28px;
+        margin-top: 10px;
+      }
+
+      .mensagem {
+        font-size: 14px;
+        margin-top: 12px;
+      }
+
+      .side-panel {
+        border-radius: 18px;
+        padding: 14px;
+        gap: 9px;
+      }
+
+      .side-item {
+        padding-bottom: 8px;
+      }
+
+      .side-item span:first-child {
+        font-size: 12px;
+      }
+
+      .side-item span:last-child {
+        font-size: 12px;
+      }
+
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .card {
+        border-radius: 18px;
+        padding: 13px;
+        min-height: 104px;
+      }
+
+      .card h2 {
+        font-size: 10px;
+        margin-bottom: 8px;
+      }
+
+      .valor {
+        font-size: 22px;
+        letter-spacing: -0.4px;
+      }
+
+      .sub {
+        font-size: 11px;
+        margin-top: 6px;
+      }
+
+      .section {
+        margin-top: 12px;
+        border-radius: 18px;
+        padding: 15px;
+      }
+
+      .section-title {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 7px;
+        margin-bottom: 12px;
+      }
+
+      .section h2 {
+        font-size: 17px;
+      }
+
+      .mini-badge {
+        font-size: 11px;
+        padding: 5px 9px;
+      }
+
+      .analysis {
+        font-size: 14px;
+      }
+
+      .tag {
+        font-size: 11px;
+        padding: 6px 10px;
+      }
+
+      .forecast {
+        display: flex;
+        overflow-x: auto;
+        gap: 10px;
+        padding-bottom: 4px;
+        scroll-snap-type: x mandatory;
+      }
+
+      .day {
+        min-width: 135px;
+        scroll-snap-align: start;
+        padding: 12px;
+      }
+
+      .day strong {
+        font-size: 13px;
+      }
+
+      .day span {
+        font-size: 12px;
+      }
+
+      th, td {
+        padding: 10px;
+        font-size: 12px;
+      }
+
+      footer {
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .valor {
+        font-size: 24px;
       }
     }
   </style>
 </head>
 
 <body>
-  <header>
-    <h1>Monitoramento do Rio</h1>
-    <p>Tiradentes do Sul/RS • Sistema experimental de alerta de enchentes</p>
-  </header>
+  <div class="page">
+    <header>
+      <div class="topbar">
+        <div class="brand">
+          <div class="logo-dot">RS</div>
+          <div>
+            <h1>Monitoramento do Rio</h1>
+            <p>Tiradentes do Sul/RS • Alerta experimental de enchentes</p>
+          </div>
+        </div>
 
-  <main>
-    <section id="hero" class="hero normal">
-      <div>
-        <div class="label">Nível atual</div>
-        <div id="nivel" class="nivel">Carregando...</div>
-        <div id="cota" class="cota">Cota: -- m</div>
-        <div id="mensagem" class="mensagem">Buscando dados do sistema...</div>
+        <a class="admin-link" href="admin.html">Painel admin</a>
       </div>
+    </header>
 
-      <div class="status-side">
-        <p><strong>Tendência:</strong> <span id="tendencia">--</span></p>
-        <p><strong>Última atualização:</strong> <span id="atualizacao">--</span></p>
-        <p><strong>Status do sistema:</strong> <span id="statusSistema">--</span></p>
-        <p><strong>Fonte da leitura:</strong> ESP32 + sensor ultrassônico</p>
-      </div>
-    </section>
+    <main>
+      <section id="hero" class="hero normal loading-shine">
+        <div>
+          <div class="label">Nível atual</div>
 
-    <section class="grid">
-      <div class="card">
-        <h2>Chuva prevista hoje</h2>
-        <div id="chuvaHoje" class="valor">-- mm</div>
-        <div class="sub">Precipitação acumulada prevista</div>
-      </div>
+          <div class="status-line">
+            <span id="statusDot" class="pulse-dot"></span>
+            <h2 id="nivel" class="nivel">Carregando...</h2>
+          </div>
 
-      <div class="card">
-        <h2>Probabilidade de chuva</h2>
-        <div id="probChuva" class="valor">--%</div>
-        <div class="sub">Maior probabilidade do dia</div>
-      </div>
+          <div id="cota" class="cota">Cota: -- m</div>
+          <div id="mensagem" class="mensagem">Buscando dados do sistema...</div>
+        </div>
 
-      <div class="card">
-        <h2>Temperatura atual</h2>
-        <div id="temperatura" class="valor">-- °C</div>
-        <div class="sub">Dado meteorológico online</div>
-      </div>
+        <div class="side-panel">
+          <div class="side-item">
+            <span>Tendência</span>
+            <span id="tendencia">--</span>
+          </div>
 
-      <div class="card">
-        <h2>Vento máximo hoje</h2>
-        <div id="vento" class="valor">-- km/h</div>
-        <div class="sub">Previsão diária</div>
-      </div>
-    </section>
+          <div class="side-item">
+            <span>Atualização</span>
+            <span id="atualizacao">--</span>
+          </div>
 
-    <section class="section">
-      <h2>Análise inteligente de risco</h2>
-      <div id="tagRisco" class="tag baixo">RISCO BAIXO</div>
-      <div id="analise" class="analysis">Aguardando dados...</div>
-    </section>
+          <div class="side-item">
+            <span>Sistema</span>
+            <span id="statusSistema">--</span>
+          </div>
 
-    <section class="section">
-      <h2>Previsão dos próximos dias</h2>
-      <div id="previsao" class="forecast"></div>
-    </section>
+          <div class="side-item">
+            <span>Fonte</span>
+            <span>ESP32 + sensor</span>
+          </div>
+        </div>
+      </section>
 
-    <section class="section">
-      <h2>Últimas leituras recebidas</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Horário</th>
-            <th>Cota</th>
-            <th>Nível</th>
-            <th>Distância</th>
-          </tr>
-        </thead>
-        <tbody id="historico">
-          <tr>
-            <td colspan="4">Carregando...</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-  </main>
+      <section class="grid">
+        <div class="card">
+          <h2>Chuva hoje</h2>
+          <div id="chuvaHoje" class="valor">-- mm</div>
+          <div class="sub">Precipitação prevista</div>
+        </div>
 
-  <footer>
-    Projeto escolar experimental. Dados meteorológicos via Open-Meteo e dados de nível enviados pelo ESP32.
-  </footer>
+        <div class="card">
+          <h2>Chance de chuva</h2>
+          <div id="probChuva" class="valor">--%</div>
+          <div class="sub">Maior probabilidade</div>
+        </div>
+
+        <div class="card">
+          <h2>Temperatura</h2>
+          <div id="temperatura" class="valor">-- °C</div>
+          <div class="sub">Atual online</div>
+        </div>
+
+        <div class="card">
+          <h2>Vento máximo</h2>
+          <div id="vento" class="valor">-- km/h</div>
+          <div class="sub">Previsão diária</div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <h2>Análise inteligente de risco</h2>
+          <span class="mini-badge">Atualiza automaticamente</span>
+        </div>
+
+        <div id="tagRisco" class="tag baixo">RISCO BAIXO</div>
+        <div id="analise" class="analysis">Aguardando dados...</div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <h2>Previsão dos próximos dias</h2>
+          <span class="mini-badge">Open-Meteo</span>
+        </div>
+
+        <div id="previsao" class="forecast"></div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <h2>Últimas leituras</h2>
+          <span class="mini-badge">ESP32</span>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Horário</th>
+                <th>Cota</th>
+                <th>Nível</th>
+                <th>Distância</th>
+              </tr>
+            </thead>
+
+            <tbody id="historico">
+              <tr>
+                <td colspan="4">Carregando...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Projeto escolar experimental com ESP32, sensor ultrassônico, Supabase, meteorologia online e painel web.
+    </footer>
+  </div>
 
   <script>
     const SUPABASE_URL = "https://cqbzvcgvejoigxbygrmv.supabase.co/rest/v1/leituras";
@@ -365,6 +799,8 @@
 
       atualizarHistorico(dados);
       atualizarPainel();
+
+      document.getElementById("hero").classList.remove("loading-shine");
     }
 
     async function buscarMeteorologia() {
@@ -418,14 +854,18 @@
 
       const hero = document.getElementById("hero");
       const mensagem = document.getElementById("mensagem");
+      const dot = document.getElementById("statusDot");
 
       hero.className = "hero";
+      dot.className = "pulse-dot";
 
       if (nivel === "INUNDACAO") {
         hero.classList.add("inundacao");
+        dot.classList.add("inundacao");
         mensagem.textContent = "Situação crítica. Evite áreas próximas ao rio e acompanhe orientações oficiais.";
       } else if (nivel === "ALERTA") {
         hero.classList.add("alerta");
+        dot.classList.add("alerta");
         mensagem.textContent = "Nível em alerta. O sistema recomenda acompanhamento contínuo e preparação preventiva.";
       } else {
         hero.classList.add("normal");
@@ -576,6 +1016,7 @@
         console.error(erro);
         document.getElementById("nivel").textContent = "Erro";
         document.getElementById("mensagem").textContent = "Não foi possível carregar os dados do ESP32.";
+        document.getElementById("hero").classList.remove("loading-shine");
       }
 
       try {
