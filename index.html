@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monitoramento do Rio - Tiradentes do Sul/RS</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #0f172a;
+      color: #ffffff;
+    }
+
+    header {
+      background: linear-gradient(135deg, #020617, #0f172a);
+      border-bottom: 1px solid #1e293b;
+      padding: 28px 18px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 30px;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      color: #94a3b8;
+      font-size: 15px;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .hero {
+      border-radius: 22px;
+      padding: 28px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      margin-bottom: 22px;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 22px;
+      align-items: center;
+    }
+
+    .hero.normal {
+      border-left: 10px solid #22c55e;
+    }
+
+    .hero.alerta {
+      border-left: 10px solid #facc15;
+    }
+
+    .hero.inundacao {
+      border-left: 10px solid #ef4444;
+      background: #450a0a;
+      animation: pulse 1.4s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 rgba(239, 68, 68, 0.2); }
+      50% { box-shadow: 0 0 24px rgba(239, 68, 68, 0.35); }
+      100% { box-shadow: 0 0 0 rgba(239, 68, 68, 0.2); }
+    }
+
+    .label {
+      color: #94a3b8;
+      text-transform: uppercase;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      font-weight: bold;
+    }
+
+    .nivel {
+      font-size: 52px;
+      font-weight: 900;
+      margin: 6px 0;
+      line-height: 1;
+    }
+
+    .cota {
+      font-size: 38px;
+      font-weight: 800;
+      margin-top: 12px;
+    }
+
+    .mensagem {
+      margin-top: 16px;
+      font-size: 18px;
+      line-height: 1.45;
+      color: #e2e8f0;
+    }
+
+    .status-side {
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid #334155;
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .status-side p {
+      margin: 6px 0;
+      color: #cbd5e1;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 18px;
+      padding: 20px;
+      min-height: 126px;
+    }
+
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: 14px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .valor {
+      font-size: 34px;
+      font-weight: 900;
+    }
+
+    .sub {
+      margin-top: 8px;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    .section {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 22px;
+    }
+
+    .section h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+    }
+
+    .forecast {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+    }
+
+    .day {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .day strong {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .day span {
+      display: block;
+      color: #cbd5e1;
+      font-size: 14px;
+      margin: 3px 0;
+    }
+
+    .analysis {
+      font-size: 17px;
+      line-height: 1.55;
+      color: #e2e8f0;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .tag.baixo { background: #14532d; color: #bbf7d0; }
+    .tag.moderado { background: #713f12; color: #fef08a; }
+    .tag.alto { background: #7f1d1d; color: #fecaca; }
+    .tag.critico { background: #991b1b; color: #ffffff; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #334155;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      color: #94a3b8;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    @media (max-width: 760px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .nivel {
+        font-size: 42px;
+      }
+
+      .cota {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Monitoramento do Rio</h1>
+    <p>Tiradentes do Sul/RS • Sistema experimental de alerta de enchentes</p>
+  </header>
+
+  <main>
+    <section id="hero" class="hero normal">
+      <div>
+        <div class="label">Nível atual</div>
+        <div id="nivel" class="nivel">Carregando...</div>
+        <div id="cota" class="cota">Cota: -- m</div>
+        <div id="mensagem" class="mensagem">Buscando dados do sistema...</div>
+      </div>
+
+      <div class="status-side">
+        <p><strong>Tendência:</strong> <span id="tendencia">--</span></p>
+        <p><strong>Última atualização:</strong> <span id="atualizacao">--</span></p>
+        <p><strong>Status do sistema:</strong> <span id="statusSistema">--</span></p>
+        <p><strong>Fonte da leitura:</strong> ESP32 + sensor ultrassônico</p>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h2>Chuva prevista hoje</h2>
+        <div id="chuvaHoje" class="valor">-- mm</div>
+        <div class="sub">Precipitação acumulada prevista</div>
+      </div>
+
+      <div class="card">
+        <h2>Probabilidade de chuva</h2>
+        <div id="probChuva" class="valor">--%</div>
+        <div class="sub">Maior probabilidade do dia</div>
+      </div>
+
+      <div class="card">
+        <h2>Temperatura atual</h2>
+        <div id="temperatura" class="valor">-- °C</div>
+        <div class="sub">Dado meteorológico online</div>
+      </div>
+
+      <div class="card">
+        <h2>Vento máximo hoje</h2>
+        <div id="vento" class="valor">-- km/h</div>
+        <div class="sub">Previsão diária</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Análise inteligente de risco</h2>
+      <div id="tagRisco" class="tag baixo">RISCO BAIXO</div>
+      <div id="analise" class="analysis">Aguardando dados...</div>
+    </section>
+
+    <section class="section">
+      <h2>Previsão dos próximos dias</h2>
+      <div id="previsao" class="forecast"></div>
+    </section>
+
+    <section class="section">
+      <h2>Últimas leituras recebidas</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Horário</th>
+            <th>Cota</th>
+            <th>Nível</th>
+            <th>Distância</th>
+          </tr>
+        </thead>
+        <tbody id="historico">
+          <tr>
+            <td colspan="4">Carregando...</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    Projeto escolar experimental. Dados meteorológicos via Open-Meteo e dados de nível enviados pelo ESP32.
+  </footer>
+
+  <script>
+    const SUPABASE_URL = "https://cqbzvcgvejoigxbygrmv.supabase.co/rest/v1/leituras";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNxYnp2Y2d2ZWpvaWd4Ynlncm12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2NzI1MzEsImV4cCI6MjA5ODI0ODUzMX0.IEkJ5I3kYRraFj6AK_7rw5HDiAiY8BGvf6Fb4GnkJlo";
+
+    const LATITUDE = -27.40;
+    const LONGITUDE = -54.08;
+
+    let ultimaLeitura = null;
+    let leituraAnterior = null;
+    let meteo = null;
+
+    async function buscarLeituras() {
+      const url = `${SUPABASE_URL}?select=*&order=created_at.desc&limit=8`;
+
+      const resposta = await fetch(url, {
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": `Bearer ${SUPABASE_KEY}`
+        }
+      });
+
+      if (!resposta.ok) {
+        throw new Error("Erro ao buscar leituras do Supabase");
+      }
+
+      const dados = await resposta.json();
+
+      ultimaLeitura = dados[0] || null;
+      leituraAnterior = dados[1] || null;
+
+      atualizarHistorico(dados);
+      atualizarPainel();
+    }
+
+    async function buscarMeteorologia() {
+      const url =
+        `https://api.open-meteo.com/v1/forecast` +
+        `?latitude=${LATITUDE}` +
+        `&longitude=${LONGITUDE}` +
+        `&current=temperature_2m` +
+        `&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max` +
+        `&forecast_days=7` +
+        `&timezone=America%2FSao_Paulo`;
+
+      const resposta = await fetch(url);
+
+      if (!resposta.ok) {
+        throw new Error("Erro ao buscar meteorologia");
+      }
+
+      meteo = await resposta.json();
+
+      atualizarMeteorologia();
+      atualizarPainel();
+    }
+
+    function atualizarPainel() {
+      if (!ultimaLeitura) {
+        document.getElementById("nivel").textContent = "Sem dados";
+        document.getElementById("mensagem").textContent = "Nenhuma leitura foi recebida ainda.";
+        return;
+      }
+
+      const nivel = ultimaLeitura.nivel || "NORMAL";
+      const cota = Number(ultimaLeitura.cota || 0);
+      const distancia = Number(ultimaLeitura.distancia || 0);
+      const statusSistema = ultimaLeitura.status_sistema || "online";
+
+      document.getElementById("nivel").textContent = nivel;
+      document.getElementById("cota").textContent = `Cota: ${cota.toFixed(1)} m`;
+      document.getElementById("statusSistema").textContent = statusSistema;
+
+      const data = new Date(ultimaLeitura.created_at);
+      document.getElementById("atualizacao").textContent = data.toLocaleString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        day: "2-digit",
+        month: "2-digit"
+      });
+
+      const tendencia = calcularTendencia();
+      document.getElementById("tendencia").textContent = tendencia;
+
+      const hero = document.getElementById("hero");
+      const mensagem = document.getElementById("mensagem");
+
+      hero.className = "hero";
+
+      if (nivel === "INUNDACAO") {
+        hero.classList.add("inundacao");
+        mensagem.textContent = "Situação crítica. Evite áreas próximas ao rio e acompanhe orientações oficiais.";
+      } else if (nivel === "ALERTA") {
+        hero.classList.add("alerta");
+        mensagem.textContent = "Nível em alerta. O sistema recomenda acompanhamento contínuo e preparação preventiva.";
+      } else {
+        hero.classList.add("normal");
+        mensagem.textContent = "Nível dentro da normalidade. Sistema em monitoramento contínuo.";
+      }
+
+      atualizarAnalise(nivel, cota, distancia, tendencia);
+    }
+
+    function calcularTendencia() {
+      if (!ultimaLeitura || !leituraAnterior) return "Sem histórico";
+
+      const cotaAtual = Number(ultimaLeitura.cota || 0);
+      const cotaAntiga = Number(leituraAnterior.cota || 0);
+      const diferenca = cotaAtual - cotaAntiga;
+
+      if (diferenca > 0.1) return "Subindo";
+      if (diferenca < -0.1) return "Descendo";
+      return "Estável";
+    }
+
+    function atualizarMeteorologia() {
+      if (!meteo) return;
+
+      const tempAtual = meteo.current?.temperature_2m;
+      const chuvaHoje = meteo.daily?.precipitation_sum?.[0];
+      const probHoje = meteo.daily?.precipitation_probability_max?.[0];
+      const ventoHoje = meteo.daily?.wind_speed_10m_max?.[0];
+
+      document.getElementById("temperatura").textContent =
+        tempAtual !== undefined ? `${Number(tempAtual).toFixed(1)} °C` : "-- °C";
+
+      document.getElementById("chuvaHoje").textContent =
+        chuvaHoje !== undefined ? `${Number(chuvaHoje).toFixed(1)} mm` : "-- mm";
+
+      document.getElementById("probChuva").textContent =
+        probHoje !== undefined ? `${probHoje}%` : "--%";
+
+      document.getElementById("vento").textContent =
+        ventoHoje !== undefined ? `${Number(ventoHoje).toFixed(0)} km/h` : "-- km/h";
+
+      atualizarPrevisao();
+    }
+
+    function atualizarPrevisao() {
+      const container = document.getElementById("previsao");
+      container.innerHTML = "";
+
+      if (!meteo || !meteo.daily) {
+        container.innerHTML = "<p>Sem dados de previsão.</p>";
+        return;
+      }
+
+      const dias = meteo.daily.time || [];
+
+      dias.forEach((dia, index) => {
+        const data = new Date(dia + "T12:00:00");
+        const nomeDia = data.toLocaleDateString("pt-BR", {
+          weekday: "short",
+          day: "2-digit",
+          month: "2-digit"
+        });
+
+        const tempMax = meteo.daily.temperature_2m_max[index];
+        const tempMin = meteo.daily.temperature_2m_min[index];
+        const chuva = meteo.daily.precipitation_sum[index];
+        const prob = meteo.daily.precipitation_probability_max[index];
+
+        const div = document.createElement("div");
+        div.className = "day";
+        div.innerHTML = `
+          <strong>${nomeDia}</strong>
+          <span>Máx: ${Number(tempMax).toFixed(0)}°C</span>
+          <span>Mín: ${Number(tempMin).toFixed(0)}°C</span>
+          <span>Chuva: ${Number(chuva).toFixed(1)} mm</span>
+          <span>Prob: ${prob}%</span>
+        `;
+
+        container.appendChild(div);
+      });
+    }
+
+    function atualizarHistorico(dados) {
+      const tbody = document.getElementById("historico");
+      tbody.innerHTML = "";
+
+      if (!dados || dados.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4">Sem leituras.</td></tr>`;
+        return;
+      }
+
+      dados.forEach((leitura) => {
+        const data = new Date(leitura.created_at);
+
+        const linha = document.createElement("tr");
+        linha.innerHTML = `
+          <td>${data.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</td>
+          <td>${Number(leitura.cota || 0).toFixed(1)} m</td>
+          <td>${leitura.nivel || "--"}</td>
+          <td>${Number(leitura.distancia || 0).toFixed(1)} cm</td>
+        `;
+
+        tbody.appendChild(linha);
+      });
+    }
+
+    function atualizarAnalise(nivel, cota, distancia, tendencia) {
+      const tag = document.getElementById("tagRisco");
+      const analise = document.getElementById("analise");
+
+      const chuvaHoje = meteo?.daily?.precipitation_sum?.[0] ?? 0;
+      const probChuva = meteo?.daily?.precipitation_probability_max?.[0] ?? 0;
+
+      let risco = "baixo";
+      let texto = "A cota está dentro da normalidade e não há indicação crítica no momento.";
+
+      if (nivel === "INUNDACAO") {
+        risco = "critico";
+        texto = "Risco crítico: o sistema confirmou inundação. A recomendação é priorizar o alerta à população e evitar áreas próximas ao rio.";
+      } else if (nivel === "ALERTA" && (chuvaHoje >= 20 || probChuva >= 70 || tendencia === "Subindo")) {
+        risco = "alto";
+        texto = "Risco alto: a cota está em alerta e há fatores que aumentam a preocupação, como chuva prevista ou tendência de subida.";
+      } else if (nivel === "ALERTA") {
+        risco = "moderado";
+        texto = "Risco moderado: o nível está em alerta. O sistema recomenda acompanhamento frequente.";
+      } else if (nivel === "NORMAL" && (chuvaHoje >= 25 || probChuva >= 80)) {
+        risco = "moderado";
+        texto = "A cota está normal, mas a previsão meteorológica indica chuva relevante. O sistema recomenda monitoramento preventivo.";
+      } else if (tendencia === "Subindo" && probChuva >= 60) {
+        risco = "moderado";
+        texto = "A cota ainda não está em alerta, mas apresenta tendência de subida com possibilidade de chuva. Atenção preventiva recomendada.";
+      }
+
+      tag.className = `tag ${risco}`;
+
+      if (risco === "baixo") tag.textContent = "RISCO BAIXO";
+      if (risco === "moderado") tag.textContent = "RISCO MODERADO";
+      if (risco === "alto") tag.textContent = "RISCO ALTO";
+      if (risco === "critico") tag.textContent = "RISCO CRÍTICO";
+
+      analise.textContent = texto;
+    }
+
+    async function iniciar() {
+      try {
+        await buscarLeituras();
+      } catch (erro) {
+        console.error(erro);
+        document.getElementById("nivel").textContent = "Erro";
+        document.getElementById("mensagem").textContent = "Não foi possível carregar os dados do ESP32.";
+      }
+
+      try {
+        await buscarMeteorologia();
+      } catch (erro) {
+        console.error(erro);
+        document.getElementById("temperatura").textContent = "-- °C";
+        document.getElementById("chuvaHoje").textContent = "-- mm";
+        document.getElementById("probChuva").textContent = "--%";
+      }
+    }
+
+    iniciar();
+
+    setInterval(buscarLeituras, 5000);
+    setInterval(buscarMeteorologia, 15 * 60 * 1000);
+  </script>
+</body>
+</html>
