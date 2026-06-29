@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Monitoramento do Rio - Tiradentes do Sul/RS</title>
 
   <style>
@@ -168,24 +169,21 @@
       height: 13px;
       border-radius: 999px;
       background: var(--green);
-      box-shadow: 0 0 0 rgba(34, 197, 94, 0.5);
       animation: dotPulse 1.5s infinite;
     }
 
     .pulse-dot.alerta {
       background: var(--yellow);
-      box-shadow: 0 0 0 rgba(250, 204, 21, 0.5);
     }
 
     .pulse-dot.inundacao {
       background: var(--red);
-      box-shadow: 0 0 0 rgba(239, 68, 68, 0.5);
     }
 
     @keyframes dotPulse {
-      0% { box-shadow: 0 0 0 0 currentColor; }
-      70% { box-shadow: 0 0 0 10px transparent; }
-      100% { box-shadow: 0 0 0 0 transparent; }
+      0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.55); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
     }
 
     .nivel {
@@ -369,6 +367,50 @@
       margin: 4px 0;
     }
 
+    .map-card {
+      background: rgba(2, 6, 23, 0.55);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .map-card iframe {
+      width: 100%;
+      height: 430px;
+      display: block;
+      border: 0;
+      background: #020617;
+    }
+
+    .map-info {
+      padding: 14px;
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .source-list {
+      display: grid;
+      gap: 10px;
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .source-list strong {
+      color: #f8fafc;
+    }
+
+    .source-link {
+      color: #7dd3fc;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .source-link:hover {
+      text-decoration: underline;
+    }
+
     .table-wrap {
       overflow-x: auto;
       border-radius: 16px;
@@ -399,6 +441,13 @@
       color: #64748b;
       padding: 26px 10px 10px;
       font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .footer-sources {
+      margin-top: 10px;
+      color: #94a3b8;
+      font-size: 12px;
       line-height: 1.5;
     }
 
@@ -615,6 +664,15 @@
         font-size: 12px;
       }
 
+      .map-card iframe {
+        height: 320px;
+      }
+
+      .map-info,
+      .source-list {
+        font-size: 12px;
+      }
+
       th, td {
         padding: 10px;
         font-size: 12px;
@@ -633,6 +691,10 @@
       .valor {
         font-size: 24px;
       }
+
+      .map-card iframe {
+        height: 280px;
+      }
     }
   </style>
 </head>
@@ -643,6 +705,7 @@
       <div class="topbar">
         <div class="brand">
           <div class="logo-dot">RS</div>
+
           <div>
             <h1>Monitoramento do Rio</h1>
             <p>Tiradentes do Sul/RS • Alerta experimental de enchentes</p>
@@ -664,7 +727,10 @@
           </div>
 
           <div id="cota" class="cota">Cota: -- m</div>
-          <div id="mensagem" class="mensagem">Buscando dados do sistema...</div>
+
+          <div id="mensagem" class="mensagem">
+            Buscando dados do sistema...
+          </div>
         </div>
 
         <div class="side-panel">
@@ -719,11 +785,14 @@
       <section class="section">
         <div class="section-title">
           <h2>Análise inteligente de risco</h2>
-          <span class="mini-badge">Atualiza automaticamente</span>
+          <span class="mini-badge">Com apoio de IA</span>
         </div>
 
         <div id="tagRisco" class="tag baixo">RISCO BAIXO</div>
-        <div id="analise" class="analysis">Aguardando dados...</div>
+
+        <div id="analise" class="analysis">
+          Aguardando dados...
+        </div>
       </section>
 
       <section class="section">
@@ -733,6 +802,63 @@
         </div>
 
         <div id="previsao" class="forecast"></div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <h2>Radar meteorológico interativo</h2>
+          <span class="mini-badge">Windy</span>
+        </div>
+
+        <div class="map-card">
+          <iframe
+            src="https://embed.windy.com/embed2.html?lat=-27.40&lon=-54.08&detailLat=-27.40&detailLon=-54.08&width=650&height=450&zoom=7&level=surface&overlay=rain&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=true&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1"
+            loading="lazy"
+            allowfullscreen>
+          </iframe>
+
+          <div class="map-info">
+            Mapa meteorológico interativo centralizado em Tiradentes do Sul/RS. Ele permite visualizar chuva, nuvens, vento e áreas de instabilidade. No celular, use dois dedos para aproximar e mover o mapa.
+            <br><br>
+            <a
+              class="source-link"
+              href="https://www.windy.com/?rain,-27.40,-54.08,7"
+              target="_blank"
+            >
+              Abrir mapa completo no Windy
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <h2>Fontes dos dados</h2>
+          <span class="mini-badge">Transparência</span>
+        </div>
+
+        <div class="source-list">
+          <div>
+            <strong>Nível do rio:</strong>
+            dados medidos pelo ESP32 com sensor ultrassônico e enviados para o banco Supabase.
+          </div>
+
+          <div>
+            <strong>Meteorologia:</strong>
+            previsão de temperatura, chuva, probabilidade de chuva e vento via API Open-Meteo.
+          </div>
+
+          <div>
+            <strong>Radar/mapa meteorológico:</strong>
+            visualização interativa via Windy, usada para acompanhar chuva e áreas de instabilidade na região.
+          </div>
+
+          <div>
+            <strong>Análise inteligente:</strong>
+            lógica criada com apoio de IA para interpretar nível, tendência e previsão de chuva.
+            O projeto é experimental e não substitui alertas oficiais.
+          </div>
+        </div>
       </section>
 
       <section class="section">
@@ -763,12 +889,19 @@
     </main>
 
     <footer>
-      Projeto escolar experimental com ESP32, sensor ultrassônico, Supabase, meteorologia online e painel web.
+      Projeto escolar experimental com ESP32, sensor ultrassônico, Supabase, meteorologia online, mapa meteorológico, painel web e apoio de IA.
+
+      <div class="footer-sources">
+        Dados do nível: ESP32 + sensor ultrassônico • Banco de dados: Supabase • Clima: Open-Meteo • Mapa meteorológico: Windy.
+        <br>
+        Este sistema é demonstrativo e não substitui informações oficiais da Defesa Civil, INMET ou órgãos responsáveis.
+      </div>
     </footer>
   </div>
 
   <script>
     const SUPABASE_URL = "https://cqbzvcgvejoigxbygrmv.supabase.co/rest/v1/leituras";
+
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNxYnp2Y2d2ZWpvaWd4Ynlncm12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2NzI1MzEsImV4cCI6MjA5ODI0ODUzMX0.IEkJ5I3kYRraFj6AK_7rw5HDiAiY8BGvf6Fb4GnkJlo";
 
     const LATITUDE = -27.40;
@@ -842,6 +975,7 @@
       document.getElementById("statusSistema").textContent = statusSistema;
 
       const data = new Date(ultimaLeitura.created_at);
+
       document.getElementById("atualizacao").textContent = data.toLocaleString("pt-BR", {
         hour: "2-digit",
         minute: "2-digit",
@@ -876,19 +1010,29 @@
     }
 
     function calcularTendencia() {
-      if (!ultimaLeitura || !leituraAnterior) return "Sem histórico";
+      if (!ultimaLeitura || !leituraAnterior) {
+        return "Sem histórico";
+      }
 
       const cotaAtual = Number(ultimaLeitura.cota || 0);
       const cotaAntiga = Number(leituraAnterior.cota || 0);
       const diferenca = cotaAtual - cotaAntiga;
 
-      if (diferenca > 0.1) return "Subindo";
-      if (diferenca < -0.1) return "Descendo";
+      if (diferenca > 0.1) {
+        return "Subindo";
+      }
+
+      if (diferenca < -0.1) {
+        return "Descendo";
+      }
+
       return "Estável";
     }
 
     function atualizarMeteorologia() {
-      if (!meteo) return;
+      if (!meteo) {
+        return;
+      }
 
       const tempAtual = meteo.current?.temperature_2m;
       const chuvaHoje = meteo.daily?.precipitation_sum?.[0];
@@ -923,6 +1067,7 @@
 
       dias.forEach((dia, index) => {
         const data = new Date(dia + "T12:00:00");
+
         const nomeDia = data.toLocaleDateString("pt-BR", {
           weekday: "short",
           day: "2-digit",
@@ -936,6 +1081,7 @@
 
         const div = document.createElement("div");
         div.className = "day";
+
         div.innerHTML = `
           <strong>${nomeDia}</strong>
           <span>Máx: ${Number(tempMax).toFixed(0)}°C</span>
@@ -961,6 +1107,7 @@
         const data = new Date(leitura.created_at);
 
         const linha = document.createElement("tr");
+
         linha.innerHTML = `
           <td>${data.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}</td>
           <td>${Number(leitura.cota || 0).toFixed(1)} m</td>
@@ -1001,10 +1148,21 @@
 
       tag.className = `tag ${risco}`;
 
-      if (risco === "baixo") tag.textContent = "RISCO BAIXO";
-      if (risco === "moderado") tag.textContent = "RISCO MODERADO";
-      if (risco === "alto") tag.textContent = "RISCO ALTO";
-      if (risco === "critico") tag.textContent = "RISCO CRÍTICO";
+      if (risco === "baixo") {
+        tag.textContent = "RISCO BAIXO";
+      }
+
+      if (risco === "moderado") {
+        tag.textContent = "RISCO MODERADO";
+      }
+
+      if (risco === "alto") {
+        tag.textContent = "RISCO ALTO";
+      }
+
+      if (risco === "critico") {
+        tag.textContent = "RISCO CRÍTICO";
+      }
 
       analise.textContent = texto;
     }
@@ -1014,6 +1172,7 @@
         await buscarLeituras();
       } catch (erro) {
         console.error(erro);
+
         document.getElementById("nivel").textContent = "Erro";
         document.getElementById("mensagem").textContent = "Não foi possível carregar os dados do ESP32.";
         document.getElementById("hero").classList.remove("loading-shine");
@@ -1023,6 +1182,7 @@
         await buscarMeteorologia();
       } catch (erro) {
         console.error(erro);
+
         document.getElementById("temperatura").textContent = "-- °C";
         document.getElementById("chuvaHoje").textContent = "-- mm";
         document.getElementById("probChuva").textContent = "--%";
