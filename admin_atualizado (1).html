@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Admin - Sistema Inteligente de Alerta</title>
+
+  <style>
+    :root {
+      --bg: #020617;
+      --bg2: #0f172a;
+      --card: rgba(15, 23, 42, 0.88);
+      --card2: rgba(2, 6, 23, 0.58);
+      --border: rgba(148, 163, 184, 0.18);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --green: #22c55e;
+      --yellow: #facc15;
+      --red: #ef4444;
+      --blue: #38bdf8;
+      --purple: #a78bfa;
+      --orange: #fb923c;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 32%),
+        radial-gradient(circle at top right, rgba(167, 139, 250, 0.12), transparent 34%),
+        linear-gradient(180deg, #020617 0%, #0f172a 100%);
+      color: var(--text);
+    }
+
+    .page {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    header {
+      padding: 22px 0 18px;
+      animation: fadeDown 0.6s ease;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-dot {
+      width: 44px;
+      height: 44px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #38bdf8, #a78bfa);
+      color: #020617;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 950;
+      box-shadow: 0 14px 32px rgba(56, 189, 248, 0.22);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 27px;
+      line-height: 1.05;
+      letter-spacing: -0.7px;
+    }
+
+    .brand p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button, a.button {
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      padding: 11px 15px;
+      border-radius: 999px;
+      font-weight: 900;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+      transition: 0.2s ease;
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.18);
+    }
+
+    button:hover, a.button:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+    }
+
+    button.secondary, a.secondary {
+      background: rgba(30, 41, 59, 0.92);
+      box-shadow: none;
+    }
+
+    button.danger {
+      background: linear-gradient(135deg, #dc2626, #991b1b);
+      box-shadow: 0 10px 24px rgba(220, 38, 38, 0.18);
+    }
+
+    button.warning {
+      background: linear-gradient(135deg, #ca8a04, #92400e);
+      box-shadow: 0 10px 24px rgba(202, 138, 4, 0.16);
+    }
+
+    button.success {
+      background: linear-gradient(135deg, #16a34a, #166534);
+      box-shadow: 0 10px 24px rgba(22, 163, 74, 0.18);
+    }
+
+    button.purple {
+      background: linear-gradient(135deg, #7c3aed, #5b21b6);
+      box-shadow: 0 10px 24px rgba(124, 58, 237, 0.18);
+    }
+
+    .alerta-geral {
+      display: none;
+      padding: 22px;
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at top right, rgba(248, 113, 113, 0.18), transparent 34%),
+        rgba(69, 10, 10, 0.9);
+      border: 1px solid rgba(248, 113, 113, 0.45);
+      margin-bottom: 18px;
+      animation: dangerPulse 1.4s infinite;
+    }
+
+    .alerta-geral h2 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .alerta-geral p {
+      margin: 0;
+      color: #fee2e2;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    @keyframes dangerPulse {
+      0% { box-shadow: 0 0 0 rgba(239, 68, 68, 0.14); }
+      50% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.34); }
+      100% { box-shadow: 0 0 0 rgba(239, 68, 68, 0.14); }
+    }
+
+    .ok-msg, .erro-msg {
+      display: none;
+      padding: 13px 14px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      font-weight: bold;
+      animation: fadeUp 0.25s ease;
+    }
+
+    .ok-msg {
+      background: rgba(20, 83, 45, 0.85);
+      color: #bbf7d0;
+      border: 1px solid rgba(34, 197, 94, 0.5);
+    }
+
+    .erro-msg {
+      background: rgba(127, 29, 29, 0.86);
+      color: #fecaca;
+      border: 1px solid rgba(239, 68, 68, 0.5);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .card, .section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: 0 20px 58px rgba(0, 0, 0, 0.18);
+      animation: fadeUp 0.7s ease;
+    }
+
+    .card {
+      padding: 18px;
+      min-height: 126px;
+      transition: 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: auto -60px -80px auto;
+      width: 130px;
+      height: 130px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.06);
+      pointer-events: none;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(56, 189, 248, 0.34);
+    }
+
+    .card h2 {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .valor {
+      font-size: 32px;
+      font-weight: 950;
+      line-height: 1.08;
+      letter-spacing: -0.8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 8px;
+      line-height: 1.35;
+      position: relative;
+      z-index: 1;
+    }
+
+    .normal { color: var(--green); }
+    .alerta { color: var(--yellow); }
+    .inundacao { color: var(--red); }
+
+    .section {
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .section h2 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: -0.3px;
+    }
+
+    .mini-badge {
+      color: #bae6fd;
+      background: rgba(14, 165, 233, 0.14);
+      border: 1px solid rgba(56, 189, 248, 0.22);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .analysis {
+      font-size: 16px;
+      line-height: 1.58;
+      color: #e2e8f0;
+    }
+
+    .tag, .status-badge {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+
+    .tag {
+      margin-bottom: 12px;
+    }
+
+    .tag.baixo { background: #14532d; color: #bbf7d0; }
+    .tag.moderado { background: #713f12; color: #fef08a; }
+    .tag.alto { background: #7f1d1d; color: #fecaca; }
+    .tag.critico { background: #991b1b; color: white; }
+
+    .status-badge.ok { background: #14532d; color: #bbf7d0; }
+    .status-badge.warn { background: #713f12; color: #fef08a; }
+    .status-badge.danger { background: #7f1d1d; color: #fecaca; }
+    .status-badge.info { background: #0c4a6e; color: #bae6fd; }
+    .status-badge.gray { background: #334155; color: #cbd5e1; }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .control-box {
+      background: var(--card2);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      border-radius: 18px;
+      padding: 16px;
+      transition: 0.2s ease;
+    }
+
+    .control-box:hover {
+      border-color: rgba(56, 189, 248, 0.32);
+      transform: translateY(-2px);
+    }
+
+    .control-box h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+    }
+
+    .control-box p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.42;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      background: rgba(2, 6, 23, 0.88);
+      color: white;
+      margin-bottom: 10px;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: rgba(56, 189, 248, 0.55);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+    }
+
+    textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    .forecast {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+      gap: 12px;
+    }
+
+    .day {
+      background: var(--card2);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .day strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .day span {
+      display: block;
+      color: #cbd5e1;
+      margin: 4px 0;
+      font-size: 13px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      text-align: left;
+      font-size: 14px;
+      white-space: nowrap;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+    }
+
+    tr:hover td {
+      background: rgba(15, 23, 42, 0.52);
+    }
+
+    .small {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: 14px;
+      line-height: 1.45;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .obs-box {
+      background: rgba(2, 6, 23, 0.58);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      border-radius: 16px;
+      padding: 14px;
+      color: #cbd5e1;
+      line-height: 1.45;
+      min-height: 48px;
+    }
+
+    footer {
+      color: #64748b;
+      text-align: center;
+      padding: 26px 10px 10px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    footer strong {
+      color: #94a3b8;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeDown {
+      from {
+        opacity: 0;
+        transform: translateY(-12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .grid, .grid.three {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .split {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .page {
+        padding: 12px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
+
+      .brand h1 {
+        font-size: 21px;
+      }
+
+      .brand p {
+        font-size: 12px;
+      }
+
+      .logo-dot {
+        width: 38px;
+        height: 38px;
+        border-radius: 13px;
+      }
+
+      .top-actions {
+        width: 100%;
+      }
+
+      .top-actions button,
+      .top-actions a.button {
+        flex: 1;
+        text-align: center;
+        font-size: 13px;
+        padding: 10px 12px;
+      }
+
+      .grid, .grid.three {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .card, .section {
+        border-radius: 18px;
+      }
+
+      .card {
+        min-height: 110px;
+        padding: 15px;
+      }
+
+      .valor {
+        font-size: 28px;
+      }
+
+      .section {
+        padding: 15px;
+      }
+
+      .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .forecast {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 5px;
+      }
+
+      .day {
+        min-width: 135px;
+      }
+
+      th, td {
+        font-size: 12px;
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <header>
+      <div class="topbar">
+        <div class="brand">
+          <div class="logo-dot">ADM</div>
+
+          <div>
+            <h1>Painel Administrador</h1>
+            <p>Sistema Inteligente de Alerta • Tiradentes do Sul/RS</p>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <button onclick="atualizarTudo()">Atualizar agora</button>
+          <a class="button secondary" href="index.html">Ver página pública</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div id="okMsg" class="ok-msg">Comando enviado com sucesso.</div>
+      <div id="erroMsg" class="erro-msg">Erro ao executar ação.</div>
+
+      <section id="alertaGeral" class="alerta-geral">
+        <h2>⚠ INUNDAÇÃO CONFIRMADA</h2>
+        <p>O sistema está em estado crítico. Priorize o alerta à população e acompanhe as orientações oficiais.</p>
+      </section>
+
+      <section class="grid">
+        <div class="card">
+          <h2>Cota atual</h2>
+          <div id="cota" class="valor">-- m</div>
+          <div class="sub">Última leitura recebida</div>
+        </div>
+
+        <div class="card">
+          <h2>Nível confirmado</h2>
+          <div id="nivel" class="valor">--</div>
+          <div class="sub">Classificação enviada pelo ESP32</div>
+        </div>
+
+        <div class="card">
+          <h2>Distância do sensor</h2>
+          <div id="distancia" class="valor">-- cm</div>
+          <div class="sub">Informação técnica do HC-SR04</div>
+        </div>
+
+        <div class="card">
+          <h2>Tendência</h2>
+          <div id="tendencia" class="valor">--</div>
+          <div class="sub">Comparação com a leitura anterior</div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card">
+          <h2>Origem</h2>
+          <div id="origem" class="valor">--</div>
+          <div class="sub">SENSOR ou SIMULAÇÃO</div>
+        </div>
+
+        <div class="card">
+          <h2>Modo</h2>
+          <div id="modo" class="valor">--</div>
+          <div class="sub">Automático ou manual</div>
+        </div>
+
+        <div class="card">
+          <h2>Sensor</h2>
+          <div id="sensor" class="valor">--</div>
+          <div class="sub">Status da leitura física</div>
+        </div>
+
+        <div class="card">
+          <h2>Última atualização</h2>
+          <div id="atualizacao" class="valor">--:--</div>
+          <div class="sub" id="statusSistema">Sistema: --</div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card">
+          <h2>Chuva prevista hoje</h2>
+          <div id="chuvaHoje" class="valor">-- mm</div>
+          <div class="sub">Open-Meteo</div>
+        </div>
+
+        <div class="card">
+          <h2>Probabilidade de chuva</h2>
+          <div id="probChuva" class="valor">--%</div>
+          <div class="sub">Maior probabilidade do dia</div>
+        </div>
+
+        <div class="card">
+          <h2>Temperatura atual</h2>
+          <div id="temperatura" class="valor">-- °C</div>
+          <div class="sub">Dado meteorológico online</div>
+        </div>
+
+        <div class="card">
+          <h2>SMS registrados</h2>
+          <div id="totalSMS" class="valor">--</div>
+          <div class="sub">Histórico do sistema</div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <h2>Análise inteligente de risco</h2>
+          <span class="mini-badge">Apoio de IA + dados do sensor</span>
+        </div>
+
+        <div id="tagRisco" class="tag baixo">RISCO BAIXO</div>
+        <div id="analise" class="analysis">Aguardando dados...</div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <h2>Observação do sistema</h2>
+          <span id="idadeLeitura" class="mini-badge">--</span>
+        </div>
+
+        <div id="observacao" class="obs-box">Aguardando observação...</div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <h2>Controles administrativos</h2>
+          <span class="mini-badge">Comandos enviados ao ESP32</span>
+        </div>
+
+        <div class="controls">
+          <div class="control-box">
+            <h3>Mensagem no OLED</h3>
+            <p>Envia uma mensagem para aparecer no display OLED do protótipo por alguns segundos.</p>
+            <textarea id="mensagemPainel" maxlength="120" placeholder="Ex: Atenção: chuva forte prevista para hoje."></textarea>
+            <button onclick="enviarMensagemOLED()">Enviar para OLED</button>
+          </div>
+
+          <div class="control-box">
+            <h3>Testes do sistema</h3>
+            <p>Executa testes rápidos de apresentação nos componentes físicos.</p>
+            <div class="button-row">
+              <button onclick="enviarComando('testar_buzzer', '1')">Testar buzzer</button>
+              <button class="secondary" onclick="enviarComando('testar_leds', '1')">Testar LEDs</button>
+              <button class="danger" onclick="enviarComando('silenciar_buzzer', '1')">Silenciar buzzer</button>
+              <button class="success" onclick="enviarComando('ativar_buzzer', '1')">Ativar buzzer</button>
+            </div>
+          </div>
+
+          <div class="control-box">
+            <h3>Modo simulação</h3>
+            <p>Força um estado para demonstração. Depois volte para o modo automático.</p>
+            <select id="simulacaoNivel">
+              <option value="NORMAL">NORMAL</option>
+              <option value="ALERTA">ALERTA</option>
+              <option value="INUNDACAO">INUNDAÇÃO</option>
+            </select>
+            <div class="button-row">
+              <button class="warning" onclick="ativarSimulacao()">Ativar simulação</button>
+              <button class="success" onclick="enviarComando('modo_automatico', '1')">Modo automático</button>
+            </div>
+          </div>
+
+          <div class="control-box">
+            <h3>Resumo do SMS</h3>
+            <p>O SMS agora é automático: quando o sistema registra INUNDAÇÃO, a Edge Function envia ou registra o alerta.</p>
+            <div class="button-row">
+              <button class="purple" onclick="atualizarSMS()">Atualizar SMS</button>
+              <button class="secondary" onclick="atualizarContatos()">Atualizar contatos</button>
+            </div>
+          </div>
+        </div>
+
+        <p class="small">
+          Os botões criam registros na tabela <strong>comandos</strong>. O ESP32 consulta essa tabela e executa automaticamente quando estiver online.
+          O envio de SMS não usa mais SIM800L: ele é feito pelo Supabase com Edge Function e API de SMS.
+        </p>
+      </section>
+
+      <div class="split">
+        <section class="section">
+          <div class="section-title">
+            <h2>Contatos SMS</h2>
+            <span class="mini-badge">contatos_sms</span>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Telefone</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="contatosSMS">
+                <tr><td colspan="3">Carregando...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-title">
+            <h2>Histórico de SMS</h2>
+            <span class="mini-badge">sms_enviados</span>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Data/hora</th>
+                  <th>Nome</th>
+                  <th>Telefone</th>
+                  <th>Alerta</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="historicoSMS">
+                <tr><td colspan="5">Carregando...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <section class="section">
+        <div class="section-title">
+          <h2>Comandos recentes</h2>
+          <span class="mini-badge">comandos</span>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Data/hora</th>
+                <th>Tipo</th>
+                <th>Valor</th>
+                <th>Executado</th>
+              </tr>
+            </thead>
+            <tbody id="historicoComandos">
+              <tr><td colspan="4">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <h2>Previsão dos próximos dias</h2>
+          <span class="mini-badge">Open-Meteo</span>
+        </div>
+
+        <div id="previsao" class="forecast">
+          <p>Carregando previsão...</p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title">
+          <h2>Histórico técnico das últimas leituras</h2>
+          <span class="mini-badge">leituras</span>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Data/hora</th>
+                <th>Cota</th>
+                <th>Nível</th>
+                <th>Distância</th>
+                <th>Temperatura</th>
+                <th>Chuva</th>
+                <th>Prob.</th>
+                <th>Origem</th>
+                <th>Modo</th>
+                <th>Sensor</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="historico">
+              <tr><td colspan="11">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <strong>Desenvolvido por:</strong> Guilherme Luft Jandrey, Miguel Welter Bonfanti, Kaio Davi Sulzbach Petzold e Gustavo Bonfanti Feller.
+      <br>
+      Turma 201 • Escola Estadual de Educação Básica Tiradentes • 2026
+      <br>
+      Painel administrativo experimental • ESP32 + Supabase + Edge Function + Open-Meteo
+    </footer>
+  </div>
+
+  <script>
+    const BASE_URL = "https://cqbzvcgvejoigxbygrmv.supabase.co/rest/v1";
+    const SUPABASE_LEITURAS_URL = `${BASE_URL}/leituras`;
+    const SUPABASE_COMANDOS_URL = `${BASE_URL}/comandos`;
+    const SUPABASE_SMS_URL = `${BASE_URL}/sms_enviados`;
+    const SUPABASE_CONTATOS_URL = `${BASE_URL}/contatos_sms`;
+
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNxYnp2Y2d2ZWpvaWd4Ynlncm12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2NzI1MzEsImV4cCI6MjA5ODI0ODUzMX0.IEkJ5I3kYRraFj6AK_7rw5HDiAiY8BGvf6Fb4GnkJlo";
+
+    const LATITUDE = -27.40;
+    const LONGITUDE = -54.08;
+
+    let leituras = [];
+    let ultimaLeitura = null;
+    let leituraAnterior = null;
+    let meteo = null;
+    let smsHistorico = [];
+    let contatos = [];
+    let comandos = [];
+
+    function headersSupabase(json = false, prefer = false) {
+      const h = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": `Bearer ${SUPABASE_KEY}`
+      };
+
+      if (json) h["Content-Type"] = "application/json";
+      if (prefer) h["Prefer"] = "return=minimal";
+
+      return h;
+    }
+
+    function mostrarOk(texto = "Ação realizada com sucesso.") {
+      const ok = document.getElementById("okMsg");
+      ok.textContent = texto;
+      ok.style.display = "block";
+
+      setTimeout(() => {
+        ok.style.display = "none";
+      }, 3200);
+    }
+
+    function mostrarErro(texto = "Erro ao executar ação.") {
+      const erro = document.getElementById("erroMsg");
+      erro.textContent = texto;
+      erro.style.display = "block";
+
+      setTimeout(() => {
+        erro.style.display = "none";
+      }, 4500);
+    }
+
+    function formatarNumero(valor, casas = 1) {
+      if (valor === null || valor === undefined || isNaN(Number(valor))) return "--";
+      return Number(valor).toFixed(casas).replace(".", ",");
+    }
+
+    function formatarData(dataISO, completo = true) {
+      if (!dataISO) return "--";
+
+      const data = new Date(dataISO);
+
+      if (completo) {
+        return data.toLocaleString("pt-BR");
+      }
+
+      return data.toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+    }
+
+    function diferencaEmSegundos(dataISO) {
+      if (!dataISO) return null;
+
+      const data = new Date(dataISO).getTime();
+      const agora = Date.now();
+
+      return Math.floor((agora - data) / 1000);
+    }
+
+    function badgeStatus(texto, tipo = "gray") {
+      return `<span class="status-badge ${tipo}">${texto}</span>`;
+    }
+
+    function tipoNivel(nivel) {
+      const n = String(nivel || "").toUpperCase();
+      if (n === "INUNDACAO") return "danger";
+      if (n === "ALERTA") return "warn";
+      if (n === "NORMAL") return "ok";
+      return "gray";
+    }
+
+    async function enviarComando(tipo, valor) {
+      try {
+        const resposta = await fetch(SUPABASE_COMANDOS_URL, {
+          method: "POST",
+          headers: headersSupabase(true, true),
+          body: JSON.stringify({
+            tipo: tipo,
+            valor: valor,
+            executado: false
+          })
+        });
+
+        if (!resposta.ok) {
+          const texto = await resposta.text();
+          console.error(texto);
+          throw new Error("Erro no Supabase");
+        }
+
+        mostrarOk(`Comando enviado: ${tipo}`);
+        await atualizarComandos();
+
+      } catch (erro) {
+        console.error(erro);
+        mostrarErro("Erro ao enviar comando. Verifique a tabela comandos e as permissões.");
+      }
+    }
+
+    function enviarMensagemOLED() {
+      const texto = document.getElementById("mensagemPainel").value.trim();
+
+      if (!texto) {
+        mostrarErro("Digite uma mensagem para o OLED.");
+        return;
+      }
+
+      enviarComando("mensagem_oled", texto);
+      document.getElementById("mensagemPainel").value = "";
+    }
+
+    function ativarSimulacao() {
+      const nivel = document.getElementById("simulacaoNivel").value;
+      enviarComando("simular_nivel", nivel);
+    }
+
+    async function buscarLeituras() {
+      const url = `${SUPABASE_LEITURAS_URL}?select=*&order=created_at.desc&limit=25`;
+
+      const resposta = await fetch(url, {
+        headers: headersSupabase()
+      });
+
+      if (!resposta.ok) {
+        throw new Error("Erro ao buscar leituras do Supabase");
+      }
+
+      leituras = await resposta.json();
+      ultimaLeitura = leituras[0] || null;
+      leituraAnterior = leituras[1] || null;
+
+      atualizarPainel();
+      atualizarHistorico();
+    }
+
+    async function buscarMeteorologia() {
+      const url =
+        `https://api.open-meteo.com/v1/forecast` +
+        `?latitude=${LATITUDE}` +
+        `&longitude=${LONGITUDE}` +
+        `&current=temperature_2m` +
+        `&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max` +
+        `&forecast_days=7` +
+        `&timezone=America%2FSao_Paulo`;
+
+      const resposta = await fetch(url);
+
+      if (!resposta.ok) {
+        throw new Error("Erro ao buscar meteorologia");
+      }
+
+      meteo = await resposta.json();
+
+      atualizarMeteorologia();
+      atualizarPrevisao();
+      atualizarAnalise();
+    }
+
+    async function atualizarSMS() {
+      try {
+        const url = `${SUPABASE_SMS_URL}?select=*&order=created_at.desc&limit=15`;
+
+        const resposta = await fetch(url, {
+          headers: headersSupabase()
+        });
+
+        if (!resposta.ok) {
+          throw new Error("Erro ao buscar SMS");
+        }
+
+        smsHistorico = await resposta.json();
+        atualizarHistoricoSMS();
+
+      } catch (erro) {
+        console.error(erro);
+        document.getElementById("historicoSMS").innerHTML =
+          `<tr><td colspan="5">Não foi possível carregar o histórico de SMS.</td></tr>`;
+        document.getElementById("totalSMS").textContent = "--";
+      }
+    }
+
+    async function atualizarContatos() {
+      try {
+        const url = `${SUPABASE_CONTATOS_URL}?select=*&order=nome.asc`;
+
+        const resposta = await fetch(url, {
+          headers: headersSupabase()
+        });
+
+        if (!resposta.ok) {
+          throw new Error("Erro ao buscar contatos");
+        }
+
+        contatos = await resposta.json();
+        atualizarTabelaContatos();
+
+      } catch (erro) {
+        console.error(erro);
+        document.getElementById("contatosSMS").innerHTML =
+          `<tr><td colspan="3">Não foi possível carregar os contatos.</td></tr>`;
+      }
+    }
+
+    async function atualizarComandos() {
+      try {
+        const url = `${SUPABASE_COMANDOS_URL}?select=*&order=created_at.desc&limit=12`;
+
+        const resposta = await fetch(url, {
+          headers: headersSupabase()
+        });
+
+        if (!resposta.ok) {
+          throw new Error("Erro ao buscar comandos");
+        }
+
+        comandos = await resposta.json();
+        atualizarTabelaComandos();
+
+      } catch (erro) {
+        console.error(erro);
+        document.getElementById("historicoComandos").innerHTML =
+          `<tr><td colspan="4">Não foi possível carregar os comandos.</td></tr>`;
+      }
+    }
+
+    function atualizarPainel() {
+      if (!ultimaLeitura) {
+        document.getElementById("nivel").textContent = "Sem dados";
+        document.getElementById("cota").textContent = "-- m";
+        document.getElementById("observacao").textContent = "Nenhuma leitura recebida.";
+        return;
+      }
+
+      const nivel = String(ultimaLeitura.nivel || "NORMAL").toUpperCase();
+      const cota = Number(ultimaLeitura.cota || 0);
+      const distancia = Number(ultimaLeitura.distancia || 0);
+      const statusSistema = ultimaLeitura.status_sistema || "--";
+      const origem = ultimaLeitura.origem || "--";
+      const modo = ultimaLeitura.modo || "--";
+      const sensorOk = ultimaLeitura.sensor_ok;
+
+      const nivelEl = document.getElementById("nivel");
+      nivelEl.textContent = nivel;
+      nivelEl.className = "valor";
+
+      if (nivel === "NORMAL") nivelEl.classList.add("normal");
+      if (nivel === "ALERTA") nivelEl.classList.add("alerta");
+      if (nivel === "INUNDACAO") nivelEl.classList.add("inundacao");
+
+      document.getElementById("cota").textContent = `${formatarNumero(cota, 1)} m`;
+      document.getElementById("distancia").textContent = `${formatarNumero(distancia, 1)} cm`;
+      document.getElementById("tendencia").textContent = calcularTendencia();
+
+      document.getElementById("origem").textContent = origem;
+      document.getElementById("modo").textContent = modo;
+      document.getElementById("sensor").textContent = sensorOk === false ? "ERRO" : "OK";
+
+      const data = new Date(ultimaLeitura.created_at);
+      document.getElementById("atualizacao").textContent = data.toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+
+      document.getElementById("statusSistema").textContent = `Sistema: ${statusSistema}`;
+      document.getElementById("observacao").textContent = ultimaLeitura.observacao || "Sem observação.";
+
+      const segundos = diferencaEmSegundos(ultimaLeitura.created_at);
+      const idade = document.getElementById("idadeLeitura");
+
+      if (segundos === null) {
+        idade.textContent = "--";
+        idade.style.color = "#bae6fd";
+      } else if (segundos > 120) {
+        idade.textContent = `Leitura antiga: ${Math.floor(segundos / 60)} min`;
+        idade.style.color = "#fecaca";
+      } else {
+        idade.textContent = `Atualizada há ${segundos}s`;
+        idade.style.color = "#bbf7d0";
+      }
+
+      document.getElementById("alertaGeral").style.display =
+        nivel === "INUNDACAO" ? "block" : "none";
+
+      atualizarAnalise();
+    }
+
+    function calcularTendencia() {
+      if (!ultimaLeitura || !leituraAnterior) return "Sem histórico";
+
+      const atual = Number(ultimaLeitura.cota || 0);
+      const anterior = Number(leituraAnterior.cota || 0);
+      const diff = atual - anterior;
+
+      if (diff > 0.1) return "Subindo";
+      if (diff < -0.1) return "Descendo";
+      return "Estável";
+    }
+
+    function atualizarMeteorologia() {
+      if (!meteo) return;
+
+      const tempAtual = meteo.current?.temperature_2m;
+      const chuvaHoje = meteo.daily?.precipitation_sum?.[0];
+      const probHoje = meteo.daily?.precipitation_probability_max?.[0];
+
+      document.getElementById("temperatura").textContent =
+        tempAtual !== undefined ? `${formatarNumero(tempAtual, 1)} °C` : "-- °C";
+
+      document.getElementById("chuvaHoje").textContent =
+        chuvaHoje !== undefined ? `${formatarNumero(chuvaHoje, 1)} mm` : "-- mm";
+
+      document.getElementById("probChuva").textContent =
+        probHoje !== undefined ? `${probHoje}%` : "--%";
+    }
+
+    function atualizarPrevisao() {
+      const container = document.getElementById("previsao");
+      container.innerHTML = "";
+
+      if (!meteo || !meteo.daily) {
+        container.innerHTML = "<p>Sem dados de previsão.</p>";
+        return;
+      }
+
+      const dias = meteo.daily.time || [];
+
+      dias.forEach((dia, index) => {
+        const data = new Date(dia + "T12:00:00");
+
+        const nomeDia = data.toLocaleDateString("pt-BR", {
+          weekday: "short",
+          day: "2-digit",
+          month: "2-digit"
+        });
+
+        const tempMax = meteo.daily.temperature_2m_max[index];
+        const tempMin = meteo.daily.temperature_2m_min[index];
+        const chuva = meteo.daily.precipitation_sum[index];
+        const prob = meteo.daily.precipitation_probability_max[index];
+        const vento = meteo.daily.wind_speed_10m_max[index];
+
+        const div = document.createElement("div");
+        div.className = "day";
+        div.innerHTML = `
+          <strong>${nomeDia}</strong>
+          <span>Máx: ${Number(tempMax).toFixed(0)}°C</span>
+          <span>Mín: ${Number(tempMin).toFixed(0)}°C</span>
+          <span>Chuva: ${Number(chuva).toFixed(1)} mm</span>
+          <span>Prob: ${prob}%</span>
+          <span>Vento: ${Number(vento).toFixed(0)} km/h</span>
+        `;
+
+        container.appendChild(div);
+      });
+    }
+
+    function atualizarHistorico() {
+      const tbody = document.getElementById("historico");
+      tbody.innerHTML = "";
+
+      if (!leituras || leituras.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="11">Sem leituras.</td></tr>`;
+        return;
+      }
+
+      leituras.forEach((leitura) => {
+        const linha = document.createElement("tr");
+
+        const nivel = String(leitura.nivel || "--").toUpperCase();
+        const nivelTipo = tipoNivel(nivel);
+        const sensorTexto = leitura.sensor_ok === false ? badgeStatus("ERRO", "danger") : badgeStatus("OK", "ok");
+
+        linha.innerHTML = `
+          <td>${formatarData(leitura.created_at)}</td>
+          <td>${formatarNumero(leitura.cota, 1)} m</td>
+          <td>${badgeStatus(nivel, nivelTipo)}</td>
+          <td>${formatarNumero(leitura.distancia, 1)} cm</td>
+          <td>${formatarNumero(leitura.temperatura, 1)} °C</td>
+          <td>${formatarNumero(leitura.chuva_hoje, 1)} mm</td>
+          <td>${Number(leitura.prob_chuva || 0)}%</td>
+          <td>${leitura.origem || "--"}</td>
+          <td>${leitura.modo || "--"}</td>
+          <td>${sensorTexto}</td>
+          <td>${leitura.status_sistema || "--"}</td>
+        `;
+
+        tbody.appendChild(linha);
+      });
+    }
+
+    function atualizarHistoricoSMS() {
+      const tbody = document.getElementById("historicoSMS");
+      tbody.innerHTML = "";
+
+      document.getElementById("totalSMS").textContent = smsHistorico.length;
+
+      if (!smsHistorico || smsHistorico.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5">Nenhum SMS registrado.</td></tr>`;
+        return;
+      }
+
+      smsHistorico.forEach((sms) => {
+        const status = String(sms.status || "--").toLowerCase();
+        let tipo = "gray";
+
+        if (status.includes("simulado") || status.includes("teste")) tipo = "info";
+        else if (status.includes("enviado") || status === "0" || status.includes("success")) tipo = "ok";
+        else if (status.includes("erro") || status.includes("falha")) tipo = "danger";
+
+        const linha = document.createElement("tr");
+
+        linha.innerHTML = `
+          <td>${formatarData(sms.created_at)}</td>
+          <td>${sms.nome || "--"}</td>
+          <td>${sms.telefone || "--"}</td>
+          <td>${sms.tipo_alerta || "--"}</td>
+          <td>${badgeStatus(sms.status || "--", tipo)}</td>
+        `;
+
+        tbody.appendChild(linha);
+      });
+    }
+
+    function atualizarTabelaContatos() {
+      const tbody = document.getElementById("contatosSMS");
+      tbody.innerHTML = "";
+
+      if (!contatos || contatos.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3">Nenhum contato cadastrado.</td></tr>`;
+        return;
+      }
+
+      contatos.forEach((contato) => {
+        const ativo = contato.ativo === false ? badgeStatus("INATIVO", "gray") : badgeStatus("ATIVO", "ok");
+
+        const linha = document.createElement("tr");
+        linha.innerHTML = `
+          <td>${contato.nome || "--"}</td>
+          <td>${contato.telefone || "--"}</td>
+          <td>${ativo}</td>
+        `;
+
+        tbody.appendChild(linha);
+      });
+    }
+
+    function atualizarTabelaComandos() {
+      const tbody = document.getElementById("historicoComandos");
+      tbody.innerHTML = "";
+
+      if (!comandos || comandos.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4">Nenhum comando encontrado.</td></tr>`;
+        return;
+      }
+
+      comandos.forEach((comando) => {
+        const executado = comando.executado ? badgeStatus("SIM", "ok") : badgeStatus("NÃO", "warn");
+
+        const valor = String(comando.valor || "");
+        const valorCurto = valor.length > 60 ? valor.substring(0, 60) + "..." : valor;
+
+        const linha = document.createElement("tr");
+        linha.innerHTML = `
+          <td>${formatarData(comando.created_at)}</td>
+          <td>${comando.tipo || "--"}</td>
+          <td>${valorCurto || "--"}</td>
+          <td>${executado}</td>
+        `;
+
+        tbody.appendChild(linha);
+      });
+    }
+
+    function atualizarAnalise() {
+      const tag = document.getElementById("tagRisco");
+      const analise = document.getElementById("analise");
+
+      if (!ultimaLeitura) {
+        tag.textContent = "SEM DADOS";
+        tag.className = "tag moderado";
+        analise.textContent = "Ainda não há leitura suficiente para análise.";
+        return;
+      }
+
+      const nivel = String(ultimaLeitura.nivel || "NORMAL").toUpperCase();
+      const cota = Number(ultimaLeitura.cota || 0);
+      const tendencia = calcularTendencia();
+
+      const chuvaHoje = meteo?.daily?.precipitation_sum?.[0] ?? Number(ultimaLeitura.chuva_hoje || 0);
+      const probChuva = meteo?.daily?.precipitation_probability_max?.[0] ?? Number(ultimaLeitura.prob_chuva || 0);
+
+      let risco = "baixo";
+      let texto = "A situação está dentro da normalidade. O sistema segue monitorando a cota, o sensor e as condições meteorológicas.";
+
+      if (nivel === "INUNDACAO") {
+        risco = "critico";
+        texto = `Risco crítico: inundação confirmada. A cota atual é ${formatarNumero(cota, 1)} m. O sistema deve priorizar o alerta à população e o acompanhamento das áreas próximas ao rio.`;
+      } else if (nivel === "ALERTA" && (chuvaHoje >= 20 || probChuva >= 70 || tendencia === "Subindo")) {
+        risco = "alto";
+        texto = `Risco alto: o nível está em alerta, com tendência ${tendencia.toLowerCase()} e chuva prevista de ${formatarNumero(chuvaHoje, 1)} mm. Recomenda-se acompanhamento contínuo.`;
+      } else if (nivel === "ALERTA") {
+        risco = "moderado";
+        texto = "Risco moderado: o nível está em alerta, mas ainda sem confirmação de inundação. O sistema recomenda atenção preventiva.";
+      } else if (nivel === "NORMAL" && (chuvaHoje >= 25 || probChuva >= 80)) {
+        risco = "moderado";
+        texto = "A cota está normal, porém a meteorologia indica chuva relevante ou alta probabilidade de precipitação. Recomenda-se monitoramento preventivo.";
+      } else if (tendencia === "Subindo" && probChuva >= 60) {
+        risco = "moderado";
+        texto = "A cota ainda está normal, mas apresenta tendência de subida com possibilidade de chuva. Atenção preventiva recomendada.";
+      }
+
+      tag.className = `tag ${risco}`;
+
+      if (risco === "baixo") tag.textContent = "RISCO BAIXO";
+      if (risco === "moderado") tag.textContent = "RISCO MODERADO";
+      if (risco === "alto") tag.textContent = "RISCO ALTO";
+      if (risco === "critico") tag.textContent = "RISCO CRÍTICO";
+
+      analise.textContent = texto;
+    }
+
+    async function atualizarTudo() {
+      try {
+        await buscarLeituras();
+      } catch (erro) {
+        console.error(erro);
+        mostrarErro("Erro ao buscar leituras.");
+      }
+
+      try {
+        await buscarMeteorologia();
+      } catch (erro) {
+        console.error(erro);
+      }
+
+      await atualizarSMS();
+      await atualizarContatos();
+      await atualizarComandos();
+    }
+
+    atualizarTudo();
+
+    setInterval(buscarLeituras, 3000);
+    setInterval(atualizarComandos, 8000);
+    setInterval(atualizarSMS, 10000);
+    setInterval(atualizarContatos, 30000);
+    setInterval(buscarMeteorologia, 15 * 60 * 1000);
+  </script>
+</body>
+</html>
